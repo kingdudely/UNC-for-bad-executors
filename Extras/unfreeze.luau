@@ -1,21 +1,17 @@
-function unfreeze(table)
-    local additions = {}
+local genv = getgenv()
 
+function unfreeze(table)
     return setmetatable({}, {
-        __index = function(_, key)
-            if additions[key] ~= nil then
-                return additions[key]
-            end
-            
-            return table[key]
+        __index = function(t, k)
+            local modified = rawget(t, k)
+
+            return modified ~= nil and modified or table[k] -- original
         end,
 
-        __newindex = function(_, key, value)
-            if table[key] ~= nil then
-                error(tostring(key) .. " already exists", 2)
-            end
-
-            additions[key] = value
-        end
+        __newindex = rawset
     })
 end
+
+genv.table = unfreeze(table)
+genv.table.unfreeze = unfreeze
+genv.table = table.freeze(table)

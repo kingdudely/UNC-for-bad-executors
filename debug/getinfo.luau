@@ -1,4 +1,4 @@
-local function getinfo(level, options)
+function debug.getinfo(level, options)
     options = options or "slnafu" -- falnus
     local result = {}
 
@@ -56,5 +56,3 @@ local function getinfo(level, options)
 
     return result
 end
-
-rawset(debug, "getinfo", getinfo)

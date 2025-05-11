@@ -1,11 +1,15 @@
-_G.ENV = type(_G.ENV) == "table" and _G.ENV or {
-	getgenv = function()
-		return _G.ENV	
-	end,
-}
+local fenv = getfenv()
 
-while task.wait() do
-	for k, v in _G.ENV do
-		getfenv()[k] = v
-	end
+local genv = _G.ENV
+genv = type(genv) == "table" and genv or {}
+_G.ENV = genv
+
+getgenv = function()
+	return setmetatable({}, {
+		__index = function(_, k) return genv[k] end,
+		__newindex = function(_, key, value)
+			genv[key] = value
+			fenv[key] = value
+		end
+	})
 end

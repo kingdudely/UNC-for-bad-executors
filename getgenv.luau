@@ -1,22 +1,21 @@
-if not _G.__GENV then
-    local genv = {}
-    setmetatable(genv, {
-        __index = _G,
-        __newindex = rawset
+local fenv = getfenv()
+
+do
+    _G.ENV = _G.ENV or setmetatable({}, {
+        __index = rawget,
+        __newindex = function(t, k, v)
+            rawset(t, k, v)
+            rawset(fenv, k, v)
+        end
     })
-    _G.__GENV = genv
-end
 
-function getgenv()
-    return _G.__GENV
-end
-
-local env = getfenv(1)
-setmetatable(env, {
-    __index = getgenv(),
-    __newindex = function(_, k, v)
-        getgenv()[k] = v
+    local genv = _G.ENV
+    
+    for k, v in genv do
+        fenv[k] = v
     end
-})
-
-setfenv(1, env)
+    
+    function getgenv()
+        return genv
+    end
+end

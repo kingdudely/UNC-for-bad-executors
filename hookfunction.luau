@@ -5,25 +5,14 @@ function hookfunction(old, new)
         _G
     }
 
-    local env
-    local oldName --[[, env]] = debug.getinfo(old).name or debug.info(old, "n")
-
-    if type(name) ~= "string" or #name == 0 then -- (not name) or #name <= 0
-        for _, selectedEnv in envs do
-            for name, func in selectedEnv do
-                if func == old then
-                    env = selectedEnv
-                    oldName = name
-
-                    break
-                end
+    for _, env in envs do
+        for name, func in env do
+            if func == old then
+                env[name] = new
+                return old
             end
         end
     end
 
-    if env then
-        env[oldName] = new
-    else
-        warn("Enviornment not found")
-    end
+    warn("Enviornment not found!")
 end

@@ -9,7 +9,7 @@ function debug.getinfo(level, options)
     name,
     numparams,
     is_vararg,
-    func = debug.info(getinfo, "slnaf")
+    func = debug.info(level, "slnaf")
 
     local _, what = 
         pcall(function() 

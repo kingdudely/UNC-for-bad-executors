@@ -1,21 +1,11 @@
-local fenv = getfenv()
+_G.ENV = type(_G.ENV) == "table" and _G.ENV or {
+	getgenv = function()
+		return _G.ENV	
+	end,
+}
 
-do
-    _G.ENV = _G.ENV or setmetatable({}, {
-        __index = rawget,
-        __newindex = function(t, k, v)
-            rawset(t, k, v)
-            rawset(fenv, k, v)
-        end
-    })
-
-    local genv = _G.ENV
-    
-    for k, v in genv do
-        fenv[k] = v
-    end
-    
-    function getgenv()
-        return genv
-    end
+while task.wait() do
+	for k, v in _G.ENV do
+		getfenv()[k] = v
+	end
 end

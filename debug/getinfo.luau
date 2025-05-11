@@ -11,7 +11,16 @@ function debug.getinfo(level, options)
     is_vararg,
     func = debug.info(getinfo, "slnaf")
 
-    local what = short_src == "[C]" and "C" or "Lua"
+    local _, what = 
+        pcall(function() 
+            return 
+                (iscclosure(level) and "C") 
+                or 
+                (islclosure(level) and "Lua")
+        end)
+    or 
+        nil, (short_src == "[C]" and "C" or "Lua")
+
     local source = "@" .. short_src
     local nups = -1 -- Number of up values
 

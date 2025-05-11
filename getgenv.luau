@@ -4,7 +4,7 @@ local genv = _G.ENV
 genv = type(genv) == "table" and genv or {}
 _G.ENV = genv
 
-getgenv = function()
+function getgenv()
 	return setmetatable({}, {
 		__index = function(_, k) return genv[k] end,
 		__newindex = function(_, key, value)

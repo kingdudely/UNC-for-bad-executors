@@ -1,9 +1,9 @@
 local fenv = getfenv()
 
--- globalEnv on solora so IDK
-local genv = _G.ENV
+-- _G.ENV
+local genv = _G.globalEnv
 genv = type(genv) == "table" and genv or {}
-_G.ENV = genv
+_G.globalEnv = genv
 
 function getgenv()
 	return setmetatable({}, {

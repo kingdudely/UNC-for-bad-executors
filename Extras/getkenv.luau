@@ -1,7 +1,7 @@
 function getkenv(object)
-    local function find(table, value)
-        for k, v in table do
-            if v == value then
+	local function find(table, value)
+		for k, v in table do
+			if v == value then
                 return k, v
             elseif type(v) == "table" then
                 k, v = find(v, value)

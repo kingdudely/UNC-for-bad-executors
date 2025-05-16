@@ -1,19 +1,27 @@
-function setreadonly(tbl, readonly)
+local function setreadonly(tbl, readonly)
+	local function copy(tbl)
+		if type(tbl) ~= "table" then
+			return tbl   
+		end
+        
+		local clone = table.clone(tbl)
+        
+		for k, v in clone do
+			clone[k] = copy(v)
+		end
+		
+		return clone
+	end
+    
 	assert(typeof(tbl) == "table", "table expected, got " .. typeof(tbl))
 	assert(typeof(readonly) == "boolean", "boolean expected, got " .. typeof(readonly))
 	
 	if readonly then
-		return table.freeze(tbl)
+		table.freeze(tbl)
 	else
-		if type(tbl) ~= "table" then
-			return tbl
-		end
+		local clone = copy(tbl)
+		local level, index = getkenv(tbl)
 
-		local copy = table.clone(tbl)
-		for k, v in copy do
-			copy[k] = thaw(v)
-		end
-
-		return copy
+		debug.setstack(level, index, clone) -- Extras/getkenv
 	end
 end

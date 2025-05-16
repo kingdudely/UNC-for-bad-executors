@@ -1,41 +1,15 @@
-local function hookfunction(old, new)
-    local function find(table, value)
-        for k, v in table do
-            if v == value then
-                return k, v
-            elseif type(v) == "table" then
-                k, v = find(v, value)
+function hookfunction(old, new)
+    local env, index = getkenv(old) -- Extras/getkenv
 
-                if k and v then
-                    return k, v
-                end
-            end
-        end
-    end
+	if index then
+		if type(env) == "number" and type(index) == "number" then
+		    debug.setstack(env, index, new)
+		elseif env then
+		    env[index] = new
+		end
 
-    local envs = {
-        getfenv(),
-        getgenv(),
-        _G
-    }
-
-    for _, env in envs do
-        local name = find(env, old)
-
-        if name then
-            env[name] = new
-            return old
-        end
-    end
-    
-    local success = xpcall(function()
-        local stack = debug.getstack(4)
-        local index = table.find(stack, old)
-
-        debug.setstack(4, index, new)
-    end, function()
-        warn("Function hook failed!")    
-    end)
-    
-    return success and old
+		return old
+	else
+		warn("Hook failed")
+	end
 end

@@ -30,16 +30,26 @@ function getkenv(object)
 		local name = find(env, object)
 		
 		if name then
-        	return env, name
-    	end
+			return env, name
+		end
 	end
 	
-	local success, index = pcall(function()
-		local stack = debug.getstack(4)
-        local index = table.find(stack, object)
-    	
-        return index
-	end)
+	local index
+	local level = 2 -- IDK why it should be 2
 	
-	return nil, (success and index)
+	while true do
+	    local success, stack = pcall(debug.getstack, level)
+	    
+	    if not success then
+	        level -= 3 -- Change level so it is compatible with new environment
+	        break
+        end
+	    
+	    index = table.find(stack, object)
+	    level += 1
+	    
+	    -- task.wait()
+	end
+	
+    return level, index
 end

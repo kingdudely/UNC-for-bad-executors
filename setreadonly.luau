@@ -1,6 +1,6 @@
 function setreadonly(tbl, readonly)
 	assert(typeof(tbl) == "table", "table expected, got " .. typeof(tbl))
-	assert(typeof(tbl) == "boolean", "boolean expected, got " .. typeof(tbl))
+	assert(typeof(readonly) == "boolean", "boolean expected, got " .. typeof(readonly))
 	
 	if readonly then
 		return table.freeze(tbl)

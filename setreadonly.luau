@@ -17,11 +17,19 @@ local function setreadonly(tbl, readonly)
 	assert(typeof(readonly) == "boolean", "boolean expected, got " .. typeof(readonly))
 	
 	if readonly then
-		table.freeze(tbl)
+		pcall(table.freeze, tbl)
 	else
 		local clone = copy(tbl)
-		local level, index = getkenv(tbl)
+		local env, index = getkenv(tbl)
 
-		debug.setstack(level, index, clone) -- Extras/getkenv
+		if index then
+			if type(env) == "number" and type(index) == "number" then
+				debug.setstack(env, index, clone)
+			elseif env then
+				env[index] = clone
+			end
+		else
+			warn("Setting readonly failed")
+		end
 	end
 end

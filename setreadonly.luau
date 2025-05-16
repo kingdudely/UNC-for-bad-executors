@@ -10,10 +10,10 @@ function setreadonly(tbl, readonly)
 		end
 
 		local copy = table.clone(tbl)
-    	for k, v in copy do
-        	copy[k] = thaw(v)
-    	end
+		for k, v in copy do
+			copy[k] = thaw(v)
+		end
 
-    	return copy
+		return copy
 	end
 end

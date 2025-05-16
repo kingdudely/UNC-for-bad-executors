@@ -1,5 +1,5 @@
 function setreadonly(tbl, readonly)
-    assert(typeof(tbl) == "table", "table expected, got " .. typeof(tbl))
+	assert(typeof(tbl) == "table", "table expected, got " .. typeof(tbl))
 	assert(typeof(tbl) == "boolean", "boolean expected, got " .. typeof(tbl))
 	
 	if readonly then

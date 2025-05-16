@@ -38,18 +38,18 @@ function getkenv(object)
 	local level = 2 -- IDK why it should be 2
 	
 	while true do
-	    local success, stack = pcall(debug.getstack, level)
+		local success, stack = pcall(debug.getstack, level)
 	    
-	    if not success then
-	        level -= 3 -- Change level so it is compatible with new environment
-	        break
-        end
+		if not success then
+			level -= 3 -- Change level so it is compatible with new environment
+			break
+		end
 	    
-	    index = table.find(stack, object)
-	    level += 1
+		index = table.find(stack, object)
+		level += 1
 	    
-	    -- task.wait()
+		-- task.wait()
 	end
 	
-    return level, index
+	return level, index
 end

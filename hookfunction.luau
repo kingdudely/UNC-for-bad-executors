@@ -1,4 +1,4 @@
-function hookfunction(old, new)
+local function hookfunction(old, new)
     local function find(table, value)
         for k, v in table do
             if v == value then
@@ -27,6 +27,15 @@ function hookfunction(old, new)
             return old
         end
     end
+    
+    local success = xpcall(function()
+        local stack = debug.getstack(4)
+        local index = table.find(stack, old)
 
-    warn("Environment not found!")
+        debug.setstack(4, index, new)
+    end, function()
+        warn("Function hook failed!")    
+    end)
+    
+    return success and old
 end

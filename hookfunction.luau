@@ -28,5 +28,5 @@ function hookfunction(old, new)
         end
     end
 
-    warn("Environment ent not found!")
+    warn("Environment not found!")
 end

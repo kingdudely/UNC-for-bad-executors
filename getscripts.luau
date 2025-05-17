@@ -3,7 +3,10 @@ function getscripts()
 
 	for _, instance in game:GetDescendants() do
 		if instance:IsA("LuaSourceContainer") then
-			table.insert(scripts, instance)
+			local _, enabled = pcall(function() return instance.Enabled end)
+			if enabled then -- Module Scripts and enabled scripts
+				table.insert(scripts, instance)
+			end
 		end
 	end
 	

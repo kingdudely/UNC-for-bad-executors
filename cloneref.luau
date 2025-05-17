@@ -1,56 +1,55 @@
-function cloneref(instance)
-	local obj = newproxy(true)
-	local meta = getmetatable(obj)
+function cloneref(object)
+	local proxy = newproxy(true)
+	local metatable = getmetatable(proxy)
 
 	local metamethods = {
-		__type      = "Instance",
-		__newindex  = instance,
-		__metatable = getmetatable(instance),
-		__tostring  = function() return tostring(instance) end,
-		__call      = function() return instance() end,
-		__unm       = function() return -instance end,
-		__len       = function() return #instance end,
-		__index     = function(_, key)
-			local selected = instance[key]
-			
-			if type(selected) == "function" then
+		type      = typeof(object),
+		newindex  = object,
+		metatable = getmetatable(object),
+		tostring  = function() return tostring(object) end,
+		call      = function() return object() end,
+		unm       = function() return -object end,
+		len       = function() return #object end,
+		index     = function(_, key)
+			local value = object[key]
+
+			if type(value) == "function" then
 				return function(_, ...)
-					return selected(instance, ...)
+					return value(object, ...)
 				end
 			end
-			
-			return selected
+
+			return value
 		end,
 	}
 
 	local operators = {
-	    add     = "+",
-	    sub     = "-",
-	    mul     = "*",
-	    div     = "/",
-	    idiv    = "//",
-	    mod     = "%",
-	    pow     = "^", 
-	    eq      = "==",
-	    lt      = "<",
-	    le      = "<=",
-	    concat  = ".."
+		add     = "+",
+		sub     = "-",
+		mul     = "*",
+		div     = "/",
+		idiv    = "//",
+		mod     = "%",
+		pow     = "^", 
+		eq      = "==",
+		lt      = "<",
+		le      = "<=",
+		concat  = "..",
 	}
 
 	for name, operator in operators do
-		metamethods["__" .. name] = function(_, other)
-		    
+		metamethods[name] = function(_, object1)
 			return loadstring(
-			    ([[local objects = {...}; 
+				([[local objects = {...}; 
 			      
 			      return objects[1] %s objects[2]
-			     ]]):format(operator))(instance, other)
+			    ]]):format(operator))(object, object1)
 		end
 	end
 
 	for name, value in metamethods do
-		meta[name] = value
+		metatable["__" .. name] = value
 	end
 
-	return obj
+	return proxy
 end

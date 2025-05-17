@@ -1,39 +1,56 @@
 function cloneref(instance)
+	local obj = newproxy(true)
+	local meta = getmetatable(obj)
+
 	local metamethods = {
-		newindex = instance,
-		metatable = getmetatable(instance),
-		tostring = function() return tostring(instance) end,
-		call = function() return instance() end,
-		unm = function() return -instance end,
-		len = function() return #instance end,
-		concat = "..", add = "+", sub = "-", mul = "*", div = "/", 
-		idiv = "//", mod = "%", pow = "^", eq = "==", lt = "<", le = "<=",
+		__type      = "Instance",
+		__newindex  = instance,
+		__metatable = getmetatable(instance),
+		__tostring  = function() return tostring(instance) end,
+		__call      = function() return instance() end,
+		__unm       = function() return -instance end,
+		__len       = function() return #instance end,
+		__index     = function(_, key)
+			local selected = instance[key]
+			
+			if type(selected) == "function" then
+				return function(_, ...)
+					return selected(instance, ...)
+				end
+			end
+			
+			return selected
+		end,
 	}
 
-	local obj = newproxy(true)
-	local obj_meta = getmetatable(obj)
-	
-	obj_meta.__index = function(t, i)
-		local v = instance[i]
+	local operators = {
+	    add     = "+",
+	    sub     = "-",
+	    mul     = "*",
+	    div     = "/",
+	    idiv    = "//",
+	    mod     = "%",
+	    pow     = "^", 
+	    eq      = "==",
+	    lt      = "<",
+	    le      = "<=",
+	    concat  = ".."
+	}
 
-		return 
-			if type(v) == "function" then
-				function(self, ...)
-					return v(self and instance, ...)
-				end
-			else
-				v
+	for name, operator in operators do
+		metamethods["__" .. name] = function(_, other)
+		    
+			return loadstring(
+			    ([[local objects = {...}; 
+			      
+			      return objects[1] %s objects[2]
+			     ]]):format(operator))(instance, other)
+		end
 	end
-	
-	for method, value in metamethods do
-		obj_meta["__" .. method] =
-			type(value) == "string" and
-				function(_, compare)
-					return loadstring(`return {instance}{value}{compare}`)()
-				end 
-			or
-				value
+
+	for name, value in metamethods do
+		meta[name] = value
 	end
-		
+
 	return obj
 end

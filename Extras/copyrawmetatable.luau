@@ -1,13 +1,3 @@
---[[
-local HttpService = game:GetService("HttpService")
-HttpService:GenerateGUID():gsub("[^%w_]", "")
-
-			local function geterror(message)
-				-- Get everything after the last colon - or just use message if it there are no colons - then trim whitespace characters
-				return type(message) == "string" and (message:match(".*:([^:]+)$") or message):match("^%s*(.-)%s*$") or nil
-			end
-]]
-
 function copyrawmetatable(object)
 	local metatable = getmetatable(object)
 
@@ -18,25 +8,21 @@ function copyrawmetatable(object)
 
 		-- This would be "getmetamethod" but it only returns the metamethod if it is a function and if it errors 
 		local function getmetafunction(technique, ...)
-			local _, result = xpcall(technique, function(techerror)
-				local metafunction = debug.info(2, "f")
+			local _, metafunction = xpcall(technique, function() return debug.info(2, "f") end, ...)
 
-				-- If the metafunction is the same as the technique, either the metamethod didn't handle it properly or it doesn't exist
-				local ismetafunction = metafunction ~= technique
-				return ismetafunction and metafunction or nil
-			end, ...)
-
-			return result
+			-- If the metafunction is the same as the technique, either the metamethod didn't handle it properly or it doesn't exist
+			-- local ismetafunction
+			return metafunction ~= technique and metafunction or nil
 		end
 
 		metatable = {
-			-- Could be object[nil], but if __index/__newindex does not exist it will say "table index is nil"
-			__index = getmetafunction(function() return object[''] end),
-			__newindex = getmetafunction(function() object[''] = object[''] end),
+			-- Or object['']
+			__index = getmetafunction(function() return object[nil] end),
+			__newindex = getmetafunction(function() object[nil] = object[nil] end),
 
-			-- Looks complex but it's just running a randomly generated name as a method
+			-- Looks complex but it's just running a randomly generated method
 			-- (object)
-			__namecall = getmetafunction(function() return loadstring(("(...):%s()"):format(UUID)) end, object),
+			__namecall = getmetafunction(loadstring(("(...):%s()"):format(UUID)), object),
 			
 			__add = getmetafunction(function() return object + nil end),
 			
@@ -49,10 +35,3 @@ function copyrawmetatable(object)
 
 	return metatable
 end
-
-local b = setmetatable({}, {
-	__add = function(a, b, c) print(a,b,c) return c + b * 1 end,
-	__metatable = false
-})
-
-print(getrawmetatable(game))

@@ -3,13 +3,13 @@ function hookfunction(old, new)
 
 	if index then
 		if type(env) == "number" and type(index) == "number" then
-		    debug.setstack(env, index, new)
+			debug.setstack(env, index, new)
 		elseif env then
-		    env[index] = new
+			env[index] = new
 		end
 
 		return old
-	else
-		warn("Hook failed")
 	end
+
+	warn("Hook failed")
 end

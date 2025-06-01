@@ -3,7 +3,7 @@ local function enforcetypes(types, ...)
 
 	for nth, expected in types do
 		local type = typeof(args[nth])
-		local name = debug.info(2, "n"):match(".+") or "main"
+		local name = debug.info(2, "n"):match(".+") or "main" -- If #functionName <= 0, :match(".+") returns nil
 
 		local message = `%s argument #{nth} to '{name}' ({expected} expected%s)`
 		
@@ -17,4 +17,4 @@ local function enforcetypes(types, ...)
 end
 
 -- enforcetypes({"table"}, {}) Good
--- enforcetypes({"number", "string"}, 1, 2) Error
+-- enforcetypes({"number", "string"}, {}, 2) Error

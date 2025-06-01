@@ -1,5 +1,5 @@
 function debug.getinfo(level, options)
-    options = options or "slnafu" -- falnus
+    options = options or "slnafu"
     local result = {}
 
     -- Blud thinks this is CSS
@@ -11,15 +11,7 @@ function debug.getinfo(level, options)
     is_vararg,
     func = debug.info(level, "slnaf")
 
-    local _, what = 
-        pcall(function() 
-            return 
-                (iscclosure(level) and "C") 
-                or 
-                (islclosure(level) and "Lua")
-        end)
-    or 
-        nil, (short_src == "[C]" and "C" or "Lua")
+    local what = iscclosure(level) and "C" or "Lua"
 
     local source = "@" .. short_src
     local nups = -1 -- Number of up values

@@ -13,7 +13,7 @@ function getkenv(object)
 	}
 
 	for _, env in envs do
-		local _, name = find(env, object) -- Extras/find.luau
+		local _, name = find(env, object) -- Extras/find
 		
 		if name then
 			return env, name

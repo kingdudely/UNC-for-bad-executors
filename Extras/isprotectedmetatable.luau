@@ -1,5 +1,4 @@
 function isprotectedmetatable(object)
 	local metatable = getmetatable(object)
-	local success = pcall(setmetatable, object, metatable)
-	return (not success) and metatable ~= nil
+	return metatable ~= nil and not pcall(setmetatable, object, metatable) 
 end

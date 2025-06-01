@@ -1,18 +1,4 @@
 function getkenv(object)
-	local function find(table, value)
-		for k, v in table do
-			if v == value then
-				return k, v
-			elseif type(v) == "table" then
-				k, v = find(v, value)
-    
-				if k and v then
-					return k, v
-				end
-			end
-		end
-	end
-
 	local senvs = getrunningscripts()
 	for k, v in senvs do
 		senvs[k] = getsenv(v)
@@ -27,7 +13,7 @@ function getkenv(object)
 	}
 
 	for _, env in envs do
-		local name = find(env, object)
+		local _, name = find(env, object) -- Extras/find.luau
 		
 		if name then
 			return env, name
